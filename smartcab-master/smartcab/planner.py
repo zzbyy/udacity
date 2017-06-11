@@ -1,5 +1,6 @@
 import random
 
+
 class RoutePlanner(object):
     """ Complex route planner that is meant for a perpendicular grid network. """
 
@@ -11,7 +12,8 @@ class RoutePlanner(object):
     def route_to(self, destination=None):
         """ Select the destination if one is provided, otherwise choose a random intersection. """
 
-        self.destination = destination if destination is not None else random.choice(self.env.intersections.keys())
+        self.destination = destination if destination is not None else random.choice(
+            self.env.intersections.keys())
 
     def next_waypoint(self):
         """ Creates the next waypoint based on current heading, location,
@@ -22,8 +24,9 @@ class RoutePlanner(object):
         location = self.env.agent_states[self.agent]['location']
         heading = self.env.agent_states[self.agent]['heading']
 
-        delta_a = (self.destination[0] - location[0], self.destination[1] - location[1])
-        delta_b = (bounds[0] + delta_a[0] if delta_a[0] <= 0 else delta_a[0] - bounds[0], \
+        delta_a = (self.destination[0] - location[0],
+                   self.destination[1] - location[1])
+        delta_b = (bounds[0] + delta_a[0] if delta_a[0] <= 0 else delta_a[0] - bounds[0],
                    bounds[1] + delta_a[1] if delta_a[1] <= 0 else delta_a[1] - bounds[1])
 
         # Calculate true difference in location based on world-wrap
@@ -34,43 +37,50 @@ class RoutePlanner(object):
         # First check if destination is at location
         if dx == 0 and dy == 0:
             return None
-        
-        # Next check if destination is cardinally East or West of location    
+
+        # Next check if destination is cardinally East or West of location
         elif dx != 0:
 
             if dx * heading[0] > 0:  # Heading the correct East or West direction
                 return 'forward'
-            elif dx * heading[0] < 0 and heading[0] < 0: # Heading West, destination East
-                if dy > 0: # Destination also to the South
+            # Heading West, destination East
+            elif dx * heading[0] < 0 and heading[0] < 0:
+                if dy > 0:  # Destination also to the South
                     return 'left'
                 else:
                     return 'right'
-            elif dx * heading[0] < 0 and heading[0] > 0: # Heading East, destination West
-                if dy < 0: # Destination also to the North
+            # Heading East, destination West
+            elif dx * heading[0] < 0 and heading[0] > 0:
+                if dy < 0:  # Destination also to the North
                     return 'left'
                 else:
                     return 'right'
-            elif dx * heading[1] > 0: # Heading North destination West; Heading South destination East
+            # Heading North destination West; Heading South destination East
+            elif dx * heading[1] > 0:
                 return 'left'
             else:
                 return 'right'
 
-        # Finally, check if destination is cardinally North or South of location
+        # Finally, check if destination is cardinally North or South of
+        # location
         elif dy != 0:
 
             if dy * heading[1] > 0:  # Heading the correct North or South direction
                 return 'forward'
-            elif dy * heading[1] < 0 and heading[1] < 0: # Heading North, destination South
-                if dx < 0: # Destination also to the West
+            # Heading North, destination South
+            elif dy * heading[1] < 0 and heading[1] < 0:
+                if dx < 0:  # Destination also to the West
                     return 'left'
                 else:
                     return 'right'
-            elif dy * heading[1] < 0 and heading[1] > 0: # Heading South, destination North
-                if dx > 0: # Destination also to the East
+            # Heading South, destination North
+            elif dy * heading[1] < 0 and heading[1] > 0:
+                if dx > 0:  # Destination also to the East
                     return 'left'
                 else:
                     return 'right'
-            elif dy * heading[0] > 0: # Heading West destination North; Heading East destination South
+            # Heading West destination North; Heading East destination South
+            elif dy * heading[0] > 0:
                 return 'right'
             else:
                 return 'left'
