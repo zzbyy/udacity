@@ -4,12 +4,14 @@ from environment import Agent, Environment
 from planner import RoutePlanner
 from simulator import Simulator
 
+random.seed(0)
+
 
 class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
         This is the object you will be modifying. """
 
-    def __init__(self, env, learning=False, epsilon=1.0, alpha=0.5):
+    def __init__(self, env, learning=True, epsilon=1, alpha=0.5):
         # Set the agent in the evironment
         super(LearningAgent, self).__init__(env)
         self.planner = RoutePlanner(self.env, self)  # Create a route planner
@@ -25,7 +27,7 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set any additional class parameters as needed
-        self.t = 1    # exponential decay paramater
+        self.t = 1.0    # exponential decay paramater
 
     def reset(self, destination=None, testing=False):
         """ The reset function is called at the beginning of each trial.
@@ -42,10 +44,16 @@ class LearningAgent(Agent):
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
         if testing:
-            self.epsilon = 0
-            self.alpha = 0
-        self.epsilon = self.epsilon * math.exp(-self.t)
-        self.t += 1
+            self.epsilon = 0.0
+            self.alpha = 0.0
+        else:
+            # self.epsilon = 1.0 / (self.t ** 2)
+            self.epsilon = 1.0 / ((self.t * 0.05) ** 2)
+            # self.epsilon = 0.99 ** self.t
+            # self.epsilon = math.exp(-0.01 * self.t)
+            # self.epsilon = math.cos(0.001 * self.t)
+            # self.epsilon = 1 / (self.t ** 2 )
+            self.t += 1.0
 
         return None
 
@@ -65,7 +73,7 @@ class LearningAgent(Agent):
         ###########
         # Set 'state' as a tuple of relevant data for the agent
         state = (waypoint, inputs['light'], inputs['left'],
-                 inputs['right'], inputs['oncoming'], deadline)
+                 inputs['right'], inputs['oncoming'])
 
         return state
 
@@ -119,6 +127,8 @@ class LearningAgent(Agent):
                 maxQ = self.get_maxQ(state)
                 actions = [act for act in self.Q[state] if self.Q[state][act] == maxQ]
                 action = random.choice(actions)
+        else:
+            action = random.choice(self.valid_actions)
 
         return action
 
@@ -135,7 +145,7 @@ class LearningAgent(Agent):
         # 'gamma')
         if self.learning:
             self.Q[state][action] = self.Q[state][action] + \
-                                    self.alpha * (reward - self.Q[state][action])
+                self.alpha * (reward - self.Q[state][action])
         return
 
     def update(self):
@@ -163,7 +173,7 @@ def run():
     #   num_dummies - discrete number of dummy agents in the environment, default is 100
     # grid_size   - discrete number of intersections (columns, rows), default
     # is (8, 6)
-    env = Environment()
+    env = Environment(verbose=False)
 
     ##############
     # Create the driving agent
@@ -171,7 +181,7 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent)
+    agent = env.create_agent(LearningAgent, learning=True, epsilon=1.0, alpha=0.99)
 
     ##############
     # Follow the driving agent
@@ -186,14 +196,14 @@ def run():
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env, update_delay=0.01, log_metrics=True, display=False)
+    sim = Simulator(env, update_delay=0.01, log_metrics=True, optimized=True, display=False)
 
     ##############
     # Run the simulator
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test=10)
+    sim.run(n_test=10, tolerance=0.0001)
 
 
 if __name__ == '__main__':
