@@ -48,11 +48,12 @@ class LearningAgent(Agent):
             self.alpha = 0.0
         else:
             # self.epsilon = 1.0 / (self.t ** 2)
-            self.epsilon = 1.0 / ((self.t * 0.2) ** 2)
+            self.epsilon = 1.0 / ((self.t * 0.05) ** 2)
             # self.epsilon = 0.99 ** self.t
             # self.epsilon = math.exp(-0.01 * self.t)
             # self.epsilon = math.cos(0.001 * self.t)
             # self.epsilon = 1 / (self.t ** 2 )
+            # self.epsilon -= 0.05
             self.t += 1.0
 
         return None
@@ -100,9 +101,11 @@ class LearningAgent(Agent):
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
         if self.learning:
-            initial_qvalue = {'left': 0.0,
-                              'right': 0.0, 'forward': 0.0, None: 0.0}
-            self.Q[state] = self.Q.get(state, initial_qvalue)
+            # initial_qvalue = {'left': 0.0,
+            #                   'right': 0.0, 'forward': 0.0, None: 0.0}
+            # self.Q[state] = self.Q.get(state, initial_qvalue)
+            self.Q.setdefault(
+                state, {action: 0.0 for action in self.valid_actions})
         return
 
     def choose_action(self, state):
@@ -184,7 +187,7 @@ def run():
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
     agent = env.create_agent(
-        LearningAgent, learning=True, epsilon=1.0, alpha=0.9)
+        LearningAgent, learning=True, epsilon=1.0, alpha=0.55)
 
     ##############
     # Follow the driving agent
@@ -207,7 +210,7 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test=10, tolerance=0.0001)
+    sim.run(n_test=10, tolerance=0.01)
 
 
 if __name__ == '__main__':
