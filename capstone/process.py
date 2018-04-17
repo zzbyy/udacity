@@ -1,4 +1,10 @@
 from sklearn.datasets import fetch_20newsgroups
+from nltk.tokenize import RegexpTokenizer
+from nltk.stem.porter import PorterStemmer
+from nltk.corpus import stopwords
+
+import os
+import pickle
 
 
 def fetch_raw_data(categories, remove):
@@ -17,8 +23,9 @@ def fetch_raw_data(categories, remove):
 
 
 def clean_head_foot(docs):
-    # remove header lines except 'Subject' and 'Organization'
-
+    '''
+    Remove header lines except 'Subject' and 'Organization'
+    '''
     clean_docs = []
     for doc in docs:
         head, split, tail = doc.partition('\n\n')
@@ -45,3 +52,52 @@ def clean_head_foot(docs):
         clean_docs.append(clean_doc)
 
     return clean_docs
+
+
+def preprocess(docs):
+    '''Tokenization, stemming and stopwords.'''
+    tokenizer = RegexpTokenizer('[a-zA-Z]{2,}')
+    stemmer = PorterStemmer()
+    stop_words = stopwords.words('english')
+
+    new_docs = []
+
+    for doc in docs:
+        tokens = tokenizer.tokenize(doc)
+        tokens = [stemmer.stem(t) for t in tokens if t not in stop_words]
+        new_docs.append(' '.join(tokens))
+
+    return new_docs
+
+
+def load_data():
+    '''Load cleaned data from preprocessed local data file,
+    or clean data right now.'''
+    data_file = './data/data.pkl'
+    if os.path.exists(data_file):
+        print('Loading cleaned data from file...')
+        with open(data_file, 'rb') as f:
+            data = pickle.load(f)
+        X_train = data['X_train']
+        X_test = data['X_test']
+        y_train = data['y_train']
+        y_test = data['y_test']
+        return X_train, y_train, X_test, y_test
+    else:
+        print('Cleaning raw data...')
+        data = {}
+        X_train, y_train, X_test, y_test = fetch_raw_data(None, ('quotes'))
+
+        X_train = clean_head_foot(X_train)
+        X_train = preprocess(X_train)
+        X_test = clean_head_foot(X_test)
+        X_test = preprocess(X_test)
+
+        data = {'X_train': X_train, 'X_test': X_test,
+                'y_train': y_train, 'y_test': y_test}
+
+        print('Storing cleaned data to data file...')
+        with open(data_file, 'wb') as f:
+            pickle.dump(data, f)
+
+        return X_train, y_train, X_test, y_test
