@@ -57,6 +57,7 @@ def clean_head_foot(docs):
 def preprocess(docs):
     '''Tokenization, stemming and stopwords.'''
     tokenizer = RegexpTokenizer('[a-zA-Z]{2,}')
+    # tokenizer = RegexpTokenizer('[\w\']')
     stemmer = PorterStemmer()
     stop_words = stopwords.words('english')
 
