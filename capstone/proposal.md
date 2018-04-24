@@ -10,13 +10,13 @@
 
 ### 2. 问题描述
 
-本项目要解决的是个监督学习的问题，通过使用已分类的数据训练分类模型，而后在测试集上对模型进行测试。对于文本数据，只要能将文本内容表示为某种固定长度的向量形式，将向量带入分类模型对模型进行训练，便可得到可用于分类的模型。此时，文本分类问题就变为了普通的监督学习分类问题。所以，本项目中需要解决两个问题：1. 将原始的文本数据表示为数学向量并提取出有效的数据特征，2. 训练出有效的分类模型对数据进行分类。通过对模型分类结果的准确性的评估来判断文本分类的表现。
+本项目要解决的是个监督学习的问题，通过使用已分类的数据训练分类模型，而后在测试集上对模型进行测试。对于文本数据，只要能将文本内容表示为某种固定长度的向量形式，将向量带入分类模型对模型进行训练，便可得到可用于分类的模型。此时，文本分类问题就变为了普通的监督学习分类问题。所以，本项目中需要解决两个问题：1. 将原始的文本数据表示为数学向量并提取出有效的数据特征，2. 训练出有效的分类模型对数据进行分类。可通过对模型分类结果的准确性的评估来判断文本分类的表现。
 
 ### 3. 数据集和输入
 
-项目使用的数据集为经典的20 Newsgroup数据集[@Lang95]，可直接从数据集的[官网](http://www.qwone.com/~jason/20Newsgroups/)下载，也可以使用`sklearn.datasets.fetch_20newsgroup`工具包下载使用。
+项目使用的数据集为经典的20 Newsgroup数据集[@Lang95]，可直接从数据集的[官网](http://www.qwone.com/~jason/20Newsgroups/)下载，也可以使用`sklearn`提供的工具包下载使用。
 
-该数据集共包约20000条新闻数据，被相对均匀地划分为20个不同的分类，这些数据按60%:40%的比例被均匀地划分为训练集和测试集，非常适合用来做监督学习多分类的实验。每条新闻数据包含新闻头部、正文和新闻署名（脚部）三个部分，考虑到头部和署名内容所包含的内容信息基本为零，在使用数据时，可能需要考虑对头部和脚部内容做清理。
+该数据集共包约20000条新闻数据，被相对均匀地划分为20个不同的分类，这些数据按60%:40%的比例划分为训练集和测试集，非常适合用来做监督学习多分类的实验。每条新闻数据包含新闻头部、正文和新闻署名（脚部）三个部分，考虑到头部和署名内容所包含的内容信息基本为零，在使用数据时，可能需要考虑对头部和脚部内容做清理。
 
 ### 4. 解决方案
 
@@ -40,6 +40,8 @@ $$
 
 ### 7. 项目设计
 
+> *In this final section, **summarize a theoretical workflow** for approaching a solution given the problem. Provide thorough discussion for what strategies you may consider employing, what analysis of the data might be required before being used, or which algorithms will be considered for your implementation. The workflow and discussion that you provide should align with the qualities of the previous sections. Additionally, you are encouraged to include small visualizations, pseudo code, or diagrams to aid in describing the project design, but it is not required. The discussion should clearly outline your intended workflow of the capstone project.*
+
 按照 2 中对本项目所要解决的问题的定义，需要前后解决两个问题：文本数据的向量化和分类模型的建立。
 
 #### 7.1 数据预处理
@@ -49,6 +51,10 @@ $$
 将清洗后的文本进行向量化表达时，考虑使用2种方法：TFIDF模型和Word2vec模型。可通过使用`sklearn`提供的`TfidfVectorizer`工具来将文本转化为TFIDF向量。Word2vec向量可使用`gensim`[^5]工具来获得。
 
 #### 7.2 建立分类模型
+
+```
+import pandas as pd
+```
 
 
 
@@ -66,4 +72,4 @@ $$
 [^4]: https://nlp.stanford.edu/wiki/Software/Classifier/20_Newsgroups
 [^5]: https://radimrehurek.com/gensim/index.html
 
-## 参考文献
+### 参考文献
