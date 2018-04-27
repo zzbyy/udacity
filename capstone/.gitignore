@@ -1,0 +1,14 @@
+#Ipython Notebook
+.ipynb_checkpoints
+
+#MNIST data
+MNIST-data/
+
+#GloVe data
+Keras CNN tutorial/glove.6B
+
+#Data files
+*.pkl
+*.gz
+*.txt
+

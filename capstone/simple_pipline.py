@@ -17,7 +17,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
 
-# from process import load_data
+from process import clean_head_foot
 
 print(__doc__)
 
@@ -49,6 +49,7 @@ logging.basicConfig(level=logging.INFO,
 print('Loading 20 newsgroups dataset...')
 train = fetch_20newsgroups(subset='train')
 test = fetch_20newsgroups(subset='test')
+
 
 #############################################################################
 # Define a pipeline combining a text feature extractor with a simple
@@ -87,7 +88,7 @@ if __name__ == "__main__":
     t0 = time()
     # grid_search.fit(data.data, data.target)
     # grid_search.fit(X_train, y_train)
-    grid_search.fit(train.data, train.target)
+    grid_search.fit(clean_head_foot(train.data), train.target)
     print("done in %0.3fs" % (time() - t0))
     print()
 
@@ -99,7 +100,7 @@ if __name__ == "__main__":
 
     print()
     # y_pred = grid_search.predict(X_test)
-    y_pred = grid_search.predict(test.data)
+    y_pred = grid_search.predict(clean_head_foot(test.data))
     # accuracy = accuracy_score(y_test, y_pred)
     accuracy = accuracy_score(test.target, y_pred)
     print('Accuracy: %f' % accuracy)

@@ -1,0 +1,8 @@
+#GloVe data
+glove.6B/
+
+#Data files
+*.pkl
+*.gz
+*.txt
+
